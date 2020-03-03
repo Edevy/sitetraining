@@ -1,78 +1,254 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+@author Bynan
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+# Ici nous allons détailler la fonction INSERT natif de laravel et avec JQuery
 
-## About Laravel
+Configuration de la base de donnée :
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+-   créer un base de donnée vide sous le nom de 'goha'
+-   modifier le fichier .env dans la racine du projet
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+```
+    DB_DATABASE=goha
+    DB_USERNAME=[mon nom d'utilisateur de la base]
+    DB_PASSWORD=[mon mot de passe]
+```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+-   remplacer les codes dans welcome.blade.php par:
 
-## Learning Laravel
+```html
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+        />
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+        <!-- Bootstrap CSS -->
+        <link
+            rel="stylesheet"
+            href="{{ asset('bootstrap-4.4.1-dist/css/bootstrap.min.css') }}"
+        />
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+        <title>Hello, world!</title>
+    </head>
+    <body>
+        <h1>Hello, world!</h1>
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="{{ asset('jquery/jquery-3.2.1.slim.min.js') }} "></script>
+        <script src="{{ asset('ajax/popper.min.js') }} "></script>
+        <script src="{{ asset('bootstrap-4.4.1-dist/js/bootstrap.min.js') }}"></script>
+    </body>
+</html>
+```
 
-## Laravel Sponsors
+-   puis mettez dans le dossier public de la racine :
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+    -   /bootstrap-4.4.1-dist/\*
+    -   /jquery/\*
+    -   /ajax/\*
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- [UserInsights](https://userinsights.com)
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
-- [Invoice Ninja](https://www.invoiceninja.com)
-- [iMi digital](https://www.imi-digital.de/)
-- [Earthlink](https://www.earthlink.ro/)
-- [Steadfast Collective](https://steadfastcollective.com/)
-- [We Are The Robots Inc.](https://watr.mx/)
-- [Understand.io](https://www.understand.io/)
-- [Abdel Elrafa](https://abdelelrafa.com)
-- [Hyper Host](https://hyper.host)
-- [Appoly](https://www.appoly.co.uk)
-- [OP.GG](https://op.gg)
+-   ajouter le formulaire
 
-## Contributing
+```html
+<div class="container">
+    <h1>Contact me</h1>
+    <form>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <label for="firstname">First name</label>
+                <input
+                    type="text"
+                    name="firstname"
+                    class="form-control"
+                    id="firstname"
+                    placeholder="First name"
+                />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="lastname">Last name</label>
+                <input
+                    type="text"
+                    name="lastname"
+                    class="form-control"
+                    id="lastname"
+                    placeholder="Last name"
+                />
+            </div>
+            <div class="col-md-4 mb-3">
+                <label for="username">Username</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend"
+                            >@</span
+                        >
+                    </div>
+                    <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        id="username"
+                        placeholder="Username"
+                        aria-describedby="inputGroupPrepend"
+                    />
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-6 mb-3">
+                <label for="city">City</label>
+                <input
+                    type="text"
+                    name="city"
+                    class="form-control"
+                    id="city"
+                    placeholder="City"
+                />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="state">State</label>
+                <input
+                    type="text"
+                    name="state"
+                    class="form-control"
+                    id="state"
+                    placeholder="State"
+                />
+            </div>
+            <div class="col-md-3 mb-3">
+                <label for="zip">Zip</label>
+                <input
+                    type="text"
+                    name="zip"
+                    class="form-control"
+                    id="zip"
+                    placeholder="Zip"
+                />
+            </div>
+        </div>
+        <button class="btn btn-primary btn-sm" type="submit">
+            Submit form
+        </button>
+    </form>
+</div>
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+-   ajouter la balise @csrf et les actions de la balise form
 
-## Code of Conduct
+```html
+<form method="POST" action="{{ route('save') }}">
+    @csrf
+    <div class="form-row">
+        <div class="col-md-4 mb-3"></div>
+        ...
+    </div>
+</form>
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+-   créer le contrôlleur pour gerer l'ajout
 
-## Security Vulnerabilities
+    **_php artisan make:controller FormController_**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    -   ajouter ces lignes de codes dans la fonction save()
 
-## License
+```php
+function save(Request $request){
+        $request->validate(
+        [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'username' => 'required|unique:contacts',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required|numeric'
+        ]);
+    }
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Ce n'est pas encore fini, il nous reste à créer les tables et les modèles
+
+Créons notre modèle:  
+ **_php artisan make:model Contact -m_**  
+Puis ajouter ces lignes de codes dans le modèle:
+
+```php
+namespace App;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Contact extends Model
+{
+    protected $fillable = [
+        'firstname',
+        'lastname',
+        'username',
+        'city',
+        'state',
+        'zip'
+    ];
+}
+```
+
+Puis intéressons nous sur notre migration fraîchement crée XXXXXXXXX_create_contacts_table.php :
+
+Ajouter dans la fonction up():
+
+```php
+ public function up()
+    {
+        Schema::create('contacts', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('firstname');
+            $table->string('lastname');
+            $table->string('username')->unique();
+            $table->string('city');
+            $table->string('state');
+            $table->string('zip');
+            $table->timestamps();
+        });
+    }
+```
+
+Puis taper la commande suivante pour migrer la structure de notre base de données :  
+**_php artisan migrate_**
+
+Ajouter cela à la dernière ligne de notre fonction:
+
+```php
+try {
+    Contact::create($datas);
+    $mess = "Ajouté avec succès";
+    return view('/', compact('mess'));
+} catch (\Throwable $th) {
+    throw $th;
+}
+```
+Retourner les valeurs d'erreurs à la formulaire:  
+```html
+...
+  <div class="container">
+    <h1>Contact me</h1>
+    <br>
+    @if ($mess ?? '')
+    <div class="alert alert-success">
+      <small id="message">
+        {{ $mess ?? '' }}
+      </small>
+    </div>
+    <form method="POST" action="{{ route('save') }}">
+      @csrf
+      <div class="form-row ">
+        <div class="col-md-4 mb-3">
+          <label for="firstname">First name</label>
+          <input type="text" name="firstname" class="form-control {{ $errors->has('firstname') ? ' is-invalid' : '' }}"
+            id=" firstname" placeholder="First name">
+          <div class="invalid-feedback">
+            @if ($errors->has('firstname'))
+            {{ $errors->first('firstname') }}
+            @endif
+          </div>
+...
+```
