@@ -16,6 +16,7 @@
 
   <div class="container">
     <h1>Contact me</h1>
+  <a href="{{ route('fluid_show') }}">Jquery Form</a>
     <br>
     @if ($mess ?? '')
     <div class="alert alert-success">

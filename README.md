@@ -226,29 +226,177 @@ try {
     throw $th;
 }
 ```
-Retourner les valeurs d'erreurs à la formulaire:  
+
+Retourner les valeurs d'erreurs à la formulaire:
+
 ```html
 ...
-  <div class="container">
+<div class="container">
     <h1>Contact me</h1>
-    <br>
+    <br />
     @if ($mess ?? '')
     <div class="alert alert-success">
-      <small id="message">
-        {{ $mess ?? '' }}
-      </small>
+        <small id="message">
+            {{ $mess ?? '' }}
+        </small>
     </div>
     <form method="POST" action="{{ route('save') }}">
-      @csrf
-      <div class="form-row ">
-        <div class="col-md-4 mb-3">
-          <label for="firstname">First name</label>
-          <input type="text" name="firstname" class="form-control {{ $errors->has('firstname') ? ' is-invalid' : '' }}"
-            id=" firstname" placeholder="First name">
-          <div class="invalid-feedback">
-            @if ($errors->has('firstname'))
-            {{ $errors->first('firstname') }}
-            @endif
-          </div>
+        @csrf
+        <div class="form-row ">
+            <div class="col-md-4 mb-3">
+                <label for="firstname">First name</label>
+                <input
+                    type="text"
+                    name="firstname"
+                    class="form-control {{ $errors->has('firstname') ? ' is-invalid' : '' }}"
+                    id=" firstname"
+                    placeholder="First name"
+                />
+                <div class="invalid-feedback">
+                    @if ($errors->has('firstname')) {{
+                    $errors->first('firstname') }} @endif
+                </div>
+                ...
+            </div>
+        </div>
+    </form>
+</div>
+```
+
+## La validation avec JQuery
+
+-   Enlever toutes les snippets blade
+-   changer le message en display: none
+
+```html
+<div class="alert" style="display:none">
+    <small id="message"> </small>
+</div>
+```
+
+Ajouter les fichiers correspondants à la validation ajax
+
+```html
+ <title>Hello</title>
+    <script src="{{ asset('jquery/jquery.js') }}"></script>
+</head>
+```
+
+Taper jqready dans le partie script en bas (assummant que jquery snippets est installé sous VS Code)
+
+```js
+$(document).ready(function() {});
+```
+
+Modifier ici
+
+```html
 ...
+<form id="contact" method="POST" action="javascript:void(0)">
+    ...
+    <div class="invalid-feedback invalid-username"></div>
+    ...
+</form>
+```
+
+Puis :
+
+```js
+$(document).ready(function() {
+    $("#contact").submit(function(e) {
+        // page doesn't load
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "{{route('fluid_save')}}",
+            data: new FormData(this),
+            dataType: "json",
+            processData: false,
+            contentType: false,
+            cache: false,
+            success: function(response) {
+                if (response.warning) {
+                    $.each(response.warning, function(index, value) {
+                        // console.log(index +" ---> " +value)
+                        $("input[name=" + index + "]").addClass("is-invalid");
+                        $(".invalid-" + index + "").append(value);
+
+                        $("input[name=" + index + "]").keydown(function(e) {
+                            $(this).removeClass("is-invalid");
+                            $(".invalid-" + index + "").empty();
+                        });
+
+                        $("input[name=" + index + "]").empty(function(e) {
+                            $(this).addClass("is-invalid");
+                        });
+                    });
+                }
+
+                if (response.success) {
+                    $(".alert")
+                        .css("display", "block")
+                        .addClass("alert-" + response.success.status + "")
+                        .append(response.success.message);
+                }
+                if (response.error) {
+                    console.log(response.error);
+                }
+            }
+        });
+    });
+});
+```
+
+Dans le contrôlleur:
+
+```php
+/***
+     *
+     *
+     * Fonction sauvegarder avec JQuery
+     */
+    function saveJquery(Request $req){
+        $rules = [
+            'firstname' => 'required',
+            'lastname' => 'required',
+            'username' => 'required|unique:contacts',
+            'city' => 'required',
+            'state' => 'required',
+            'zip' => 'required|numeric'
+        ];
+
+        $validate = Validator::make($req->all(), $rules);
+
+        if($validate->fails()){
+            return response()->json([
+                'warning'=>$validate->errors()
+            ]);
+        }
+
+        $datas = [
+            'firstname' => $req->firstname,
+            'lastname' => $req->lastname,
+            'username' => $req->username,
+            'city' => $req->city,
+            'state' => $req->state,
+            'zip' => $req->zip
+        ];
+
+        try {
+            Contact::create($datas);
+            return response()->json([
+                'success'=>[
+                    'status'=>'success',
+                    'message'=>'Data added with status success'
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'error'=>$th->getMessage()
+            ]);
+        }
+
+
+    }
 ```

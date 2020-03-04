@@ -17,3 +17,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::post('/contact_me', 'FormController@save')->name('save');
+Route::get('/jquery/form/show', 'FormController@showForm')->name('fluid_show');
+Route::post('/jquery/form/submit', 'FormController@saveJquery')->name('fluid_save');
